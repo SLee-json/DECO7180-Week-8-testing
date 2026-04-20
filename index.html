@@ -326,18 +326,81 @@
             </form>
         </div>
 
-        <!-- Section 2: Pre-Experiment Instructions -->
+        <!-- Section 2: Survey Questions -->
         <div class="section" id="section2">
+            <h2>Part 2: Survey Questions</h2>
+            <p style="color: #666; margin-bottom: 25px; font-size: 14px;">Please answer the following questions about your experience with dogs.</p>
+
+            <form id="surveyForm">
+                <div class="form-group">
+                    <label for="confidenceLevel">How confident are you in your abilities to interpret dog behavior?</label>
+                    <select id="confidenceLevel" required>
+                        <option value="">Select a level</option>
+                        <option value="1">1 - Not confident</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7 - Very confident</option>
+                    </select>
+                    <div class="validation-error" id="confidenceError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="unsureSituation">Have you ever encountered a situation where you were unsure about what a dog was experiencing?</label>
+                    <select id="unsureSituation" required>
+                        <option value="">Select frequency</option>
+                        <option value="1">1 - Never</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7 - Quite often</option>
+                    </select>
+                    <div class="validation-error" id="unsureError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="responseSituation">How do you usually respond in those situations?</label>
+                    <textarea id="responseSituation" placeholder="Describe how you typically respond when you're unsure about a dog's behavior..." rows="4"></textarea>
+                    <div class="validation-error" id="responseError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="motivationLevel">How motivated are you to improve your ability to recognize dog emotions?</label>
+                    <select id="motivationLevel" required>
+                        <option value="">Select a level</option>
+                        <option value="1">1 - Not motivated at all</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7 - Strongly motivated</option>
+                    </select>
+                    <div class="validation-error" id="motivationError"></div>
+                </div>
+
+                <div class="buttons">
+                    <button type="button" class="btn-primary" onclick="validateSurveyAndProceed()">Continue to Instructions</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Section 3: Pre-Experiment Instructions -->
+        <div class="section" id="section3">
             <h2>Pre-Experiment Instructions</h2>
             <p style="color: #666; margin-bottom: 25px; font-size: 14px;">In the following experiment, you will be shown 7 dog images. Please respond as quickly as you can, using your immediate impression. The options that you will see are Angry, Fear/Scared, Frustrated, Happy, Neutral/Calm and Anticipating. If your immediate impression was that you aren't sure, please select "Don't Know".</p>
 
             <div class="buttons">
-                <button type="button" class="btn-primary" onclick="proceedToSection(3)">Continue to Experiment</button>
+                <button type="button" class="btn-primary" onclick="proceedToSection(4)">Continue to Experiment</button>
             </div>
         </div>
 
-        <!-- Section 3: Image Interpretation -->
-        <div class="section" id="section3">
+        <!-- Section 4: Image Interpretation -->
+        <div class="section" id="section4">
             <h2>Part 3: Dog Behavior Interpretation</h2>
             <p style="color: #666; margin-bottom: 20px; font-size: 14px;">You will see images of dogs in various emotional/behavioral states. <strong>Respond as quickly as possible</strong> based on your first impression. Select all emotions or behaviors you believe the dog is experiencing.</p>
 
@@ -364,8 +427,8 @@
             </form>
         </div>
 
-        <!-- Section 4: Confidence Rating -->
-        <div class="section" id="section4">
+        <!-- Section 5: Confidence Rating -->
+        <div class="section" id="section5">
             <h2>Part 4: Confidence Rating</h2>
             <p style="color: #666; margin-bottom: 25px; font-size: 14px;">Please rate your confidence in your responses for each image.</p>
 
@@ -376,8 +439,8 @@
             </div>
         </div>
 
-        <!-- Section 5: Reflection -->
-        <div class="section" id="section5">
+        <!-- Section 6: Reflection -->
+        <div class="section" id="section6">
             <h2>Part 5: Reflection & Feedback</h2>
             <p style="color: #666; margin-bottom: 25px; font-size: 14px;">Please review your responses and provide reasoning for each image. Be as detailed as you'd like.</p>
 
@@ -388,8 +451,8 @@
             </div>
         </div>
 
-        <!-- Section 6: Completion -->
-        <div class="section" id="section6">
+        <!-- Section 7: Completion -->
+        <div class="section" id="section7">
             <div class="completion-message">
                 <h2>✓ Study Complete</h2>
                 <p>Thank you for participating in this research study!</p>
@@ -403,6 +466,7 @@
         // ==================== DATA STRUCTURE ====================
         const researchData = {
             demographics: {},
+            survey: {},
             interpretations: [],
             reflections: {},
             dogImages: [
@@ -504,7 +568,56 @@
             }
         }
 
-        // ==================== SECTION 3: IMAGE INTERPRETATION ====================
+        // ==================== SECTION 2: SURVEY ====================
+        function validateSurveyAndProceed() {
+            const confidenceLevel = document.getElementById('confidenceLevel').value;
+            const unsureSituation = document.getElementById('unsureSituation').value;
+            const responseSituation = document.getElementById('responseSituation').value;
+            const motivationLevel = document.getElementById('motivationLevel').value;
+            let isValid = true;
+
+            // Clear previous errors
+            document.getElementById('confidenceError').textContent = '';
+            document.getElementById('unsureError').textContent = '';
+            document.getElementById('responseError').textContent = '';
+            document.getElementById('motivationError').textContent = '';
+
+            // Validate required fields
+            if (!confidenceLevel) {
+                document.getElementById('confidenceError').textContent = 'Please select a confidence level';
+                isValid = false;
+            }
+
+            if (!unsureSituation) {
+                document.getElementById('unsureError').textContent = 'Please select a frequency';
+                isValid = false;
+            }
+
+            if (!responseSituation.trim()) {
+                document.getElementById('responseError').textContent = 'Please provide a response';
+                isValid = false;
+            }
+
+            if (!motivationLevel) {
+                document.getElementById('motivationError').textContent = 'Please select a motivation level';
+                isValid = false;
+            }
+
+            if (isValid) {
+                // Store survey data
+                researchData.survey = {
+                    confidenceLevel: confidenceLevel,
+                    unsureSituation: unsureSituation,
+                    responseSituation: responseSituation.trim(),
+                    motivationLevel: motivationLevel,
+                    timestamp: new Date().toISOString()
+                };
+
+                proceedToSection(3);
+            }
+        }
+
+        // ==================== SECTION 4: IMAGE INTERPRETATION ====================
         function displayNextImage() {
             if (researchData.currentImageIndex < researchData.dogImages.length) {
                 const currentImage = researchData.dogImages[researchData.currentImageIndex];
@@ -543,11 +656,11 @@
             if (researchData.currentImageIndex < researchData.dogImages.length) {
                 displayNextImage();
             } else {
-                proceedToSection(4);
+                proceedToSection(5);
             }
         }
 
-        // ==================== SECTION 5: REFLECTION ====================
+        // ==================== SECTION 6: REFLECTION ====================
         function displayReflectionSection() {
             const reflectionContainer = document.getElementById('reflectionContainer');
             reflectionContainer.innerHTML = '';
@@ -580,7 +693,7 @@
             });
         }
 
-        // ==================== SECTION 4: CONFIDENCE ====================
+        // ==================== SECTION 5: CONFIDENCE ====================
         function displayConfidenceSection() {
             const confidenceContainer = document.getElementById('confidenceContainer');
             confidenceContainer.innerHTML = '';
@@ -640,7 +753,7 @@
             }
 
             researchData.confidence = confidence;
-            proceedToSection(5);
+            proceedToSection(6);
         }
 
         function validateReflectionAndExport() {
@@ -663,7 +776,7 @@
 
             researchData.reflections = reflections;
             exportToCSV();
-            proceedToSection(6);
+            proceedToSection(7);
         }
 
         // ==================== CSV EXPORT ====================
@@ -683,6 +796,11 @@
             csv += 'DEMOGRAPHICS\n';
             csv += 'Age,Dog Ownership Experience,Nationality,Timestamp\n';
             csv += `"${researchData.demographics.age}","${researchData.demographics.dogExperience}","${researchData.demographics.nationality}","${researchData.demographics.timestamp}"\n\n`;
+
+            // Survey Section
+            csv += 'SURVEY QUESTIONS\n';
+            csv += 'Confidence in Dog Behavior Interpretation,Frequency of Unsure Situations,Response to Unsure Situations,Motivation to Improve,Survey Timestamp\n';
+            csv += `"${researchData.survey.confidenceLevel}","${researchData.survey.unsureSituation}","${researchData.survey.responseSituation.replace(/"/g, '""')}","${researchData.survey.motivationLevel}","${researchData.survey.timestamp}"\n\n`;
 
             // Interpretations Section
             csv += 'IMAGE INTERPRETATION RESPONSES\n';
@@ -722,11 +840,11 @@
             document.getElementById(`section${sectionNumber}`).classList.add('active');
             updateProgressBar(sectionNumber);
 
-            if (sectionNumber === 3) {
+            if (sectionNumber === 4) {
                 displayNextImage();
-            } else if (sectionNumber === 4) {
-                displayConfidenceSection();
             } else if (sectionNumber === 5) {
+                displayConfidenceSection();
+            } else if (sectionNumber === 6) {
                 displayReflectionSection();
             }
 
@@ -734,7 +852,7 @@
         }
 
         function updateProgressBar(section) {
-            const progress = (section / 6) * 100;
+            const progress = (section / 7) * 100;
             document.getElementById('progressFill').style.width = progress + '%';
         }
 
